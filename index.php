@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html> 
     <head> 
-        <title>My Form</title> 
+        <title>ITI CMS PHP</title> 
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> 
         <link rel="stylesheet" href="style.css">
     </head> 
@@ -138,7 +138,6 @@
                             echo "Gender: " . $gender . "<br>"; 
                             echo "Your Courses are: "; 
                             foreach($select_courses as $course) { echo $course . ", "; } 
-                            echo "<br>"; 
                     }
                             ?> 
                             </div> 
