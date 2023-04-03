@@ -24,24 +24,36 @@
                                     Name is required
                                 </div>
                             <?php } ?>
+                            <span>
+                                <?php 
+                                //invalid name characters
+                                echo $nameErr ?>
+                            </span> 
                         </div>
 
                         <div class="form-group"> 
                             <label for="email" class="required">Email:</label> 
-                            <input type="email" id="email" name="email" class="form-control"> 
-                                <?php if (isset($_GET['emailerror'])) {
+                            <input type="email" id="email" name="email" class="form-control" value="<?php echo $email;?>"> 
+                            <?php if (isset($_GET['emailerror'])) {
                                 //----------------BONUS  ---------------
                                 ?>
                                 <div class="alert alert-danger msg">
                                     Email is required
                                 </div>
                             <?php } ?>
+                            <span>
+                                <?php 
+                                //invalid email
+                                echo $emailErr ?>
+                            </span> 
                         </div> 
 
                         <div class="form-group"> 
                             <label for="group">Group #:</label> 
                             <input type="text" id="group" name="group" class="form-control"> 
-                        </div> <div class="form-group"> 
+                        </div>
+
+                        <div class="form-group"> 
                             <label for="class_details">Class Details:</label> 
                             <textarea id="class_details" name="class_details" class="form-control"></textarea> 
                         </div> 
@@ -76,6 +88,7 @@
                             <input type="checkbox" id="agree" name="agree" value="agree"> 
                             <?php if (isset($_GET['agreerror'])) {
                                 //----------------BONUS  ---------------
+                                // my technique is to remove the required attribute from the form to redirect the user to my erre page
                                 ?>
                                 <div class="alert alert-danger msg">
                                     You must agree to ITI terms and conditions
@@ -93,9 +106,14 @@
                         document.querySelector(".msg").style.display = "none"; }, 3000);
                     </script>
                     
-                    <?php if(isset($_POST['formSubmit'])) { 
-                        $name = $_POST["name"]; 
-                        $email = $_POST["email"]; 
+                    <?php 
+                    $name="";
+                    $email="";
+                    $group="";
+                    
+                    if(isset($_POST['formSubmit'])) { 
+                        $name = test_input($_POST["name"]); 
+                        $email = test_input($_POST["email"]); 
                         $group = $_POST["group"]; 
                         $class_details = $_POST["class_details"]; 
                         $gender = $_POST["gender"]; 
@@ -104,10 +122,21 @@
                         $errors = [];
                         //form validation 
                         if(empty($name)) { $errors['name']  = 'required'; } 
-                        elseif(empty($email)) { $errors['email']  = 'required'; } 
+                        // Check if name only contains letters and whitespace
+                        elseif(!preg_match("/^[a-zA-Z ]*$/",$name)) {
+                            $nameErr = "Only letters and white space allowed";
+                        }
+
+                        elseif(empty($email)) { $errors['email']  = 'required'; }
+                        // Check if email address is well-formed 
+                        elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) { 
+                            $emailErr = "Invalid email format"; 
+                            } 
+
                         elseif(empty($gender)) { $errors['gender']  = 'required'; } 
-                        elseif(empty($select_courses)) { echo "<div class='alert alert-danger'>Select Courses is required</div>"; } 
+
                         elseif(empty($agree)) { $errors['agree']  = 'required'; } 
+
                         // redirect the user to a specific error page for each missing required fields
                         if(!empty($errors['name']))
                         {
@@ -129,6 +158,7 @@
                             header("Location:http://localhost/PHP/?agreerror=true");
                             exit();
                         }
+                        //if the user doesn't exit, print the result
                             echo "<div class='alert alert-success'>"; 
                             echo "<h1> Your given values are as: </h1>"; 
                             echo "Name: " . $name . "<br>"; 
@@ -139,11 +169,18 @@
                             echo "Your Courses are: "; 
                             foreach($select_courses as $course) { echo $course . ", "; } 
                     }
-                            ?> 
-                            </div> 
-                        </div> 
+                    
+                    function test_input($data) { 
+                        $data = trim($data);
+                         $data = stripslashes($data); 
+                         $data = htmlspecialchars($data); 
+                         return $data; 
+                         } 
+                    ?> 
                     </div> 
                 </div> 
-            </div> 
-        </body> 
-        </html>
+             </div> 
+            </div>
+        </div> 
+    </body> 
+</html>
